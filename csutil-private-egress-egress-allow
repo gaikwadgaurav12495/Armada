@@ -1,0 +1,29 @@
+apiVersion: projectcalico.org/v3
+kind: GlobalNetworkPolicy
+metadata:
+  name: csutil-private-egress-egress-allow
+  annotations:
+    description: policy to allow csutil egress
+spec:
+  ingress:
+    - action: Allow
+      protocol: "TCP"
+      destination:
+        ports:
+          - 8834
+  egress:
+    - action: Allow
+      protocol: "TCP"
+      destination:
+        ports:
+          - 443     # HTTPS
+          - 1194    # SOS VPN
+          - 8834    # Tenable Nessus Mgr
+          - 10514   # syslogForwarderPort
+
+  order: 1500
+  #selector: "ibm.role == 'worker_private'"
+  selector: "node-role.kubernetes.io/worker == ''"
+  types:
+    - Ingress
+    - Egress
